@@ -13,9 +13,9 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
 
-
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       home: DefaultTabController(
         length: 3,
@@ -31,7 +31,7 @@ class _MyAppState extends State<MyApp> {
           ),
           body: TabBarView(
               children: <Widget>[
-                const Center(
+                 const Center(
                     child: Text(
                       'Hello Everex',
                       style: TextStyle(
@@ -42,9 +42,9 @@ class _MyAppState extends State<MyApp> {
                 ),
                 Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text('N을 입력해주세요.'),
-                      TextField(
+                    children: [
+                      const Text('N을 입력해주세요.'),
+                      const TextField(
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                         ),
@@ -52,11 +52,14 @@ class _MyAppState extends State<MyApp> {
                       //패치로 인해 2년전과 버튼 스타일 선언이 바뀜
                       ElevatedButton(
                         onPressed:null,
-                        child: Text(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(Colors.blue),
+                        ),
+                        child: const Text(
                           '확인',
                           style: TextStyle(
                               fontSize: 20,
-                              color: Colors.white
+                              color: Color(0xff2f4550)
                           ),
                         ),
                       )
