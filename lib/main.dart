@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:homework1/shapemaker.dart';
+import 'dart:math' as math;
 
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
-
   const MyApp({Key? key}) : super(key: key);
 
   @override
@@ -13,64 +12,122 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       home: DefaultTabController(
-        length: 3,
+        length: 2,
         child: Scaffold(
           appBar: AppBar(
             title: const Text('다각형 그리기'),
-            bottom: const TabBar(tabs: [
-              Tab(text: '앱 개발환경 세팅'),
-              Tab(text: '입력값'),
-              Tab(text: 'N각형')
-            ],
+            bottom: const TabBar(
+              tabs: [
+                Tab(text: '앱 개발환경 세팅'),
+                Tab(text: '입력값'),
+              ],
             ),
           ),
-          body: TabBarView(
-              children: <Widget>[
-                 const Center(
-                    child: Text(
-                      'Hello Everex',
-                      style: TextStyle(
-                          fontSize: 30,
-                          color: Colors.black
-                      ),
-                    )
-                ),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('N을 입력해주세요.'),
-                      const TextField(
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      //패치로 인해 2년전과 버튼 스타일 선언이 바뀜
-                      ElevatedButton(
-                        onPressed:null,
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(Colors.blue),
-                        ),
-                        child: const Text(
-                          '확인',
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Color(0xff2f4550)
-                          ),
-                        ),
-                      )
-                    ]
-                ),
-                const paintShape(),
-              ]
-          ),
+          body: TabBarView(children: <Widget>[
+            const Center(
+                child: Text(
+              'Hello Everex',
+              style: TextStyle(fontSize: 30, color: Colors.black),
+            )),
+            Input(),
+          ]),
         ),
       ),
     );
   }
+}
+
+class Input extends StatelessWidget {
+
+  final mycontroller = TextEditingController();
+  Input({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Text('N을 입력해주세요.'),
+      TextField(
+        controller: mycontroller,
+        decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+        ),
+      ),
+      ElevatedButton(
+        onPressed: () {
+          if(3 <= int.parse(mycontroller.text) || int.parse(mycontroller.text) <=100){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>Polygon(number: mycontroller.text)),
+            );
+          }else{
+            print("3부터 100까지 수중에서 골라주세요.");
+          }
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Colors.blue),
+        ),
+        child: const Text(
+          '확인',
+          style: TextStyle(fontSize: 20, color: Color(0xff2f4550)),
+        ),
+      )
+    ]);
+  }
+}
+
+class Polygon extends StatefulWidget {
+  String number='';
+  Polygon({Key? key,required this.number}) : super(key: key);
+
+  @override
+  State<Polygon> createState() => _PolygonState();
+}
+
+class _PolygonState extends State<Polygon> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Expanded(
+          child: CustomPaint(
+        painter: PolygonPainter(int.parse(widget.number)),
+      )),
+    );
+  }
+}
+
+class PolygonPainter extends CustomPainter {
+  final int n;
+
+  PolygonPainter(this.n);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path();
+    final paint = Paint()
+      ..strokeWidth = 10
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    Offset center = Offset(size.width / 2, size.height / 2);
+    var sizes = 100, xcenter = center.dx, ycenter = center.dy;
+    for (var i = 0; i <= n; i += 1) {
+      if (i == 0) {
+        path.moveTo(xcenter + sizes * math.cos(i * 2 * math.pi / n),
+            ycenter + sizes * math.sin(i * 2 * math.pi / n));
+      } else {
+        path.lineTo(xcenter + sizes * math.cos(i * 2 * math.pi / n),
+            ycenter + sizes * math.sin(i * 2 * math.pi / n));
+      }
+    }
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
