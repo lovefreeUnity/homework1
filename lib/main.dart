@@ -11,19 +11,19 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: DefaultTabController(
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('다각형 그리기'),
+            title: const Text('앱으로 N각형 그리기'),
             bottom: const TabBar(
               tabs: [
                 Tab(text: '앱 개발환경 세팅'),
-                Tab(text: '입력값'),
+                Tab(text: '위젯 만들기'),
               ],
             ),
           ),
@@ -42,8 +42,8 @@ class _MyAppState extends State<MyApp> {
 }
 
 class Input extends StatelessWidget {
-
   final mycontroller = TextEditingController();
+
   Input({Key? key}) : super(key: key);
 
   @override
@@ -58,13 +58,29 @@ class Input extends StatelessWidget {
       ),
       ElevatedButton(
         onPressed: () {
-          if(3 <= int.parse(mycontroller.text) || int.parse(mycontroller.text) <=100){
+          int num = int.parse(mycontroller.text);
+          if (3 <= num && num <= 100) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) =>Polygon(number: mycontroller.text)),
+              MaterialPageRoute(
+                  builder: (context) => Polygon(number: mycontroller.text)),
             );
-          }else{
-            print("3부터 100까지 수중에서 골라주세요.");
+          } else {
+            //이곳에 안내창으 띄울생각
+            showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                      title: const Text('알림'),
+                      content:
+                          const Text('다각형을 그릴 때는 3~100까지의 수 중에서\n하나를 골라 입력 해주세요.'),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context,'Cencel');
+                            },
+                            child: const Text('ok'))
+                      ],
+                    ));
           }
         },
         style: ButtonStyle(
@@ -80,8 +96,9 @@ class Input extends StatelessWidget {
 }
 
 class Polygon extends StatefulWidget {
-  String number='';
-  Polygon({Key? key,required this.number}) : super(key: key);
+  String number = '';
+
+  Polygon({Key? key, required this.number}) : super(key: key);
 
   @override
   State<Polygon> createState() => _PolygonState();
@@ -90,12 +107,16 @@ class Polygon extends StatefulWidget {
 class _PolygonState extends State<Polygon> {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Expanded(
-          child: CustomPaint(
-        painter: PolygonPainter(int.parse(widget.number)),
-      )),
-    );
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          body: Center(
+            child: Expanded(
+                child: CustomPaint(
+              painter: PolygonPainter(int.parse(widget.number)),
+            )),
+          ),
+        ));
   }
 }
 
