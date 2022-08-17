@@ -51,6 +51,8 @@ class Input extends StatelessWidget {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Text('N을 입력해주세요.'),
       TextField(
+        //숫자만 입력 받을것이다
+        keyboardType: TextInputType.number,
         controller: mycontroller,
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -71,12 +73,12 @@ class Input extends StatelessWidget {
                 context: context,
                 builder: (BuildContext context) => AlertDialog(
                       title: const Text('알림'),
-                      content:
-                          const Text('다각형을 그릴 때는 3~100까지의 수 중에서\n하나를 골라 입력 해주세요.'),
+                      content: const Text(
+                          '다각형을 그릴 때는 3~100까지의 수 중에서 하나를 골라 입력 해주세요.'),
                       actions: [
                         TextButton(
                             onPressed: () {
-                              Navigator.pop(context,'Cencel');
+                              Navigator.pop(context, 'Cencel');
                             },
                             child: const Text('ok'))
                       ],
@@ -110,6 +112,8 @@ class _PolygonState extends State<Polygon> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+          appBar: AppBar(
+              title: const Text('결과 화면'), automaticallyImplyLeading: true),
           body: Center(
             child: Expanded(
                 child: CustomPaint(
