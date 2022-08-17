@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+import 'package:flutter/services.dart';
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatefulWidget {
@@ -53,6 +55,7 @@ class Input extends StatelessWidget {
       TextField(
         //숫자만 입력 받을것이다
         keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp('[0-9]'))],
         controller: mycontroller,
         decoration: const InputDecoration(
           border: OutlineInputBorder(),
@@ -60,21 +63,46 @@ class Input extends StatelessWidget {
       ),
       ElevatedButton(
         onPressed: () {
-          int num = int.parse(mycontroller.text);
-          if (3 <= num && num <= 100) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Polygon(number: mycontroller.text)),
-            );
+          int num;
+          //텍스트 값이 들어 있다면
+          if (mycontroller.text.isNotEmpty) {
+            num = int.parse(mycontroller.text);
+            if (3 <= num && num <= 100) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Polygon(number: mycontroller.text)),
+              );
+            } else {
+              //이곳에 안내창으 띄울생각
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (BuildContext context) => AlertDialog(
+                        title: const Text('알림'),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)),
+                        content: const Text(
+                            '다각형을 그릴 때는 3~100까지의 수 중에서 하나를 골라 입력 해주세요.'),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context, 'Cencel');
+                              },
+                              child: const Text('ok'))
+                        ],
+                      ));
+            }
           } else {
-            //이곳에 안내창으 띄울생각
             showDialog(
                 context: context,
+                barrierDismissible: false,
                 builder: (BuildContext context) => AlertDialog(
-                      title: const Text('알림'),
+                      title: const Text('안내'),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0)),
                       content: const Text(
-                          '다각형을 그릴 때는 3~100까지의 수 중에서 하나를 골라 입력 해주세요.'),
+                          '값이 입력 되지않았습니다. 입력란에 그리고 싶은 다각형의 숫자를 입력해주세요'),
                       actions: [
                         TextButton(
                             onPressed: () {
